@@ -14,6 +14,7 @@ define docker_elasticsearch::instance (
   $rest_port          = 9200,
   $transport_port     = 9300,
   $heap_size          = '1g',
+  $additional_volumes = [],
 ) {
   file { "/etc/elasticsearch/${node_name}" :
     ensure    => directory,
@@ -30,8 +31,9 @@ define docker_elasticsearch::instance (
       true        => ["${bind_address}:${rest_port}:9200", "${bind_address}:${transport_port}:9300"],
       default     => [],
     },
-    volumes   => ["${data_dir}:/usr/share/elasticsearch/data", "/etc/elasticsearch/${node_name}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"],
+    volumes   => concat(["${data_dir}:/usr/share/elasticsearch/data", "/etc/elasticsearch/${node_name}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"], $additional_volumes),
     net       => "${net}",
+    subscribe => [Docker::Image["${image}"], ],
   }
   
 }
