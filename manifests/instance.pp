@@ -10,17 +10,25 @@ define docker_elasticsearch::instance (
   $cluster_members    = undef,
   $minimum_masters    = undef,
   $repos              = undef,
-  $bind_ports         = true, 
+  $bind_ports         = true,
   $rest_port          = 9200,
   $transport_port     = 9300,
+  $user               = 105,
+  $group              = 108,
   $heap_size          = '1g',
   $additional_volumes = [],
 ) {
   file { "/etc/elasticsearch/${node_name}" :
     ensure    => directory,
     require   => [File["/etc/elasticsearch"]],
-  } ->
-  file { "/etc/elasticsearch/${node_name}/elasticsearch.yml" :
+  }
+  -> file { $data_dir :
+    ensure  => directory,
+    owner   => $user,
+    group   => $group,
+    recurse => true,
+  }
+  -> file { "/etc/elasticsearch/${node_name}/elasticsearch.yml" :
     ensure    => 'present',
     content   => template('docker_elasticsearch/elasticsearch.yml.erb'),
     notify    => Service["docker-elasticsearch-${name}"]
@@ -35,5 +43,5 @@ define docker_elasticsearch::instance (
     net       => "${net}",
     subscribe => [Docker::Image["${image}_${version}"], ],
   }
-  
+
 }

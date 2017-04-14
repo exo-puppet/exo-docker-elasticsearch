@@ -1,17 +1,16 @@
 network:
   bind_host: 0.0.0.0
+<%- if scope.lookupvar('publish_host') != :undef -%>
   publish_host: <%= scope.lookupvar('publish_host') %>
+<%- end -%>
 node:
   name: <%= scope.lookupvar('node_name') %>
 cluster:
   name: <%= scope.lookupvar('cluster_name') %>
 
-discovery.zen.ping.multicast.enabled: false  
-
 discovery.zen.ping.unicast.hosts: [<%= scope.lookupvar('cluster_members') %>]
 discovery.zen.minimum_master_nodes: <%= scope.lookupvar('minimum_masters') %>
 
-<% if scope.lookupvar('repos') != :undef -%>
-
+<%- if scope.lookupvar('repos') != :undef -%>
 path.repo: <%= @repos %>
-<% end -%> 
+<%- end -%>
