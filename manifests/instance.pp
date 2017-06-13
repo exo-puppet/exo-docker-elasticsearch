@@ -10,6 +10,7 @@ define docker_elasticsearch::instance (
   $cluster_members    = undef,
   $minimum_masters    = undef,
   $repos              = undef,
+  $manage_service     = true,
   $bind_ports         = true,
   $rest_port          = 9200,
   $transport_port     = 9300,
@@ -31,17 +32,17 @@ define docker_elasticsearch::instance (
   -> file { "/etc/elasticsearch/${node_name}/elasticsearch.yml" :
     ensure    => 'present',
     content   => template('docker_elasticsearch/elasticsearch.yml.erb'),
-    notify    => Service["docker-elasticsearch-${name}"]
   } ->
   docker::run { "elasticsearch-${name}" :
-    image     => "${image}:${version}",
-    ports     => $bind_ports ? {
-      true        => ["${bind_address}:${rest_port}:9200", "${bind_address}:${transport_port}:9300"],
-      default     => [],
+    image          => "${image}:${version}",
+    ports          => $bind_ports ? {
+      true    => ["${bind_address}:${rest_port}:9200", "${bind_address}:${transport_port}:9300"],
+      default => [],
     },
-    volumes   => concat(["${data_dir}:/usr/share/elasticsearch/data", "/etc/elasticsearch/${node_name}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"], $additional_volumes),
-    net       => "${net}",
-    subscribe => [Docker::Image["${image}_${version}"], ],
+    volumes        => concat(["${data_dir}:/usr/share/elasticsearch/data", "/etc/elasticsearch/${node_name}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"], $additional_volumes),
+    net            => "${net}",
+    manage_service => $manage_service,
+    subscribe      => [Docker::Image["${image}_${version}"], ],
   }
 
 }
