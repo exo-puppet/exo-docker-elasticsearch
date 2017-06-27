@@ -41,6 +41,7 @@ define docker_elasticsearch::instance (
     },
     volumes        => concat(["${data_dir}:/usr/share/elasticsearch/data", "/etc/elasticsearch/${node_name}/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"], $additional_volumes),
     net            => "${net}",
+    env            => ["ES_JAVA_OPTS=\"-Xms${heap_size} -Xmx${heap_size}\""],
     manage_service => $manage_service,
     subscribe      => [Docker::Image["${image}_${version}"], ],
   }
