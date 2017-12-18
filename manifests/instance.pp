@@ -18,6 +18,7 @@ define docker_elasticsearch::instance (
   $group              = 108,
   $heap_size          = '1g',
   $additional_volumes = [],
+  $max_content_length = undef,
 ) {
   file { "/etc/elasticsearch/${node_name}" :
     ensure    => directory,
@@ -43,7 +44,7 @@ define docker_elasticsearch::instance (
     net            => "${net}",
     env            => ["ES_JAVA_OPTS=\"-Xms${heap_size} -Xmx${heap_size}\""],
     manage_service => $manage_service,
-    subscribe      => [Docker::Image["${image}_${version}"], ],
+    subscribe      => [Docker::Image["${image}_${version}"], File["/etc/elasticsearch/${node_name}/elasticsearch.yml"]],
   }
 
 }

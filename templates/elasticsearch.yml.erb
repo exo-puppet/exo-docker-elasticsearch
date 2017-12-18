@@ -14,3 +14,7 @@ discovery.zen.minimum_master_nodes: <%= scope.lookupvar('minimum_masters') %>
 <%- if scope.lookupvar('repos') != :undef -%>
 path.repo: <%= @repos %>
 <%- end -%>
+
+<%- if scope.lookupvar('max_content_length') != :undef -%>
+http.max_content_length: <%= @max_content_length %>
+<%- end -%>
