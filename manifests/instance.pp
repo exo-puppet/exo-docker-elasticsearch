@@ -28,7 +28,6 @@ define docker_elasticsearch::instance (
     ensure  => directory,
     owner   => $user,
     group   => $group,
-    recurse => true,
   }
   -> file { "/etc/elasticsearch/${node_name}/elasticsearch.yml" :
     ensure    => 'present',
